@@ -52,11 +52,10 @@ public class AppointmentController {
 
     @PostMapping("/appointment")
     public ResponseEntity<List<Appointment>> createAppointment(@RequestBody Appointment appointment){
-        /** TODO 
-         * Implement this function, which acts as the POST /api/appointment endpoint.
-         * Make sure to check out the whole project. Specially the Appointment.java class
-         */
-        return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        // Create a new appointment
+        Appointment a = new Appointment(appointment.getPatient(), appointment.getDoctor(), appointment.getRoom(), appointment.getStartsAt(), appointment.getFinishesAt());
+        appointmentRepository.save(a);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
