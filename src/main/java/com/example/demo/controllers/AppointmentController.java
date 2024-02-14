@@ -52,10 +52,23 @@ public class AppointmentController {
 
     @PostMapping("/appointment")
     public ResponseEntity<List<Appointment>> createAppointment(@RequestBody Appointment appointment){
-        // Create a new appointment
-        Appointment a = new Appointment(appointment.getPatient(), appointment.getDoctor(), appointment.getRoom(), appointment.getStartsAt(), appointment.getFinishesAt());
-        appointmentRepository.save(a);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        // If an appointment has the same start and finish date, return 400 (BAD REQUEST)
+        if(appointment.getStartsAt().isEqual(appointment.getFinishesAt())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // If two appointments have conflicting times, return 406 (NOT ACCEPTABLE)
+        List<Appointment> appointments = appointmentRepository.findAll(); // List of all appointments
+        for (Appointment a : appointments) {
+            if(appointment.overlaps(a)) { // If the new appointment overlaps with an existing one
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); 
+            }
+        }
+
+        // Knowing there are no conflicts, save the new appointment
+        appointmentRepository.save(appointment);
+        return new ResponseEntity<>(HttpStatus.OK); // 200 = OK
     }
 
 
