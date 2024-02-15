@@ -52,6 +52,10 @@ public class AppointmentController {
 
     @PostMapping("/appointment")
     public ResponseEntity<List<Appointment>> createAppointment(@RequestBody Appointment appointment){
+        // Input validation
+        if(appointment == null || appointment.getStartsAt() == null || appointment.getFinishesAt() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         // If an appointment has the same start and finish date, return 400 (BAD REQUEST)
         if(appointment.getStartsAt().isEqual(appointment.getFinishesAt())) {
@@ -59,16 +63,26 @@ public class AppointmentController {
         }
 
         // If two appointments have conflicting times, return 406 (NOT ACCEPTABLE)
-        List<Appointment> appointments = appointmentRepository.findAll(); // List of all appointments
-        for (Appointment a : appointments) {
-            if(appointment.overlaps(a)) { // If the new appointment overlaps with an existing one
-                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); 
+        List<Appointment> appointments = getAllAppointments().getBody();
+        if(appointments != null) {
+            for (Appointment a : appointments) {
+                if(appointment.overlaps(a)) { // If the new appointment overlaps with an existing one
+                    return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE); 
+                }
             }
         }
-
-        // Knowing there are no conflicts, save the new appointment
-        appointmentRepository.save(appointment);
-        return new ResponseEntity<>(HttpStatus.OK); // 200 = OK
+       
+        // Knowing there are no conflicts, save the appointment
+        try {
+            appointmentRepository.save(appointment);
+            if (appointments != null) {
+                appointments.add(appointment);
+            }
+        } catch (Exception e) {
+            // Log the exception and return a 500 status code
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
     }
 
 
