@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -40,7 +40,7 @@ class EntityUnitTest {
 
     private DateTimeFormatter formatter;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
         d1 = new Doctor("John", "Doe", 35, "johndoe@mail.com");
         p1 = new Patient("Jane", "Doe", 25, "janedoe@mail.com");
@@ -53,7 +53,7 @@ class EntityUnitTest {
     }
 
     // Doctor tests
-     @Test
+    @Test
     public void testCreateDoctor() {
         assertEquals(d1.getFirstName(), "John");
         assertEquals(d1.getLastName(), "Doe");
@@ -61,6 +61,7 @@ class EntityUnitTest {
         assertEquals(d1.getEmail(), "johndoe@mail.com");
     }
 
+    @Test
     public void testSaveandRetrieveDoctor() {
         Doctor savedDoctor = entityManager.persistAndFlush(d1);
         Doctor retrievedDoctor = entityManager.find(Doctor.class, savedDoctor.getId());
@@ -128,8 +129,12 @@ class EntityUnitTest {
     }
 
     @Test
-    public void testAppointmentOverlaps() {
+    public void testAppointmentOverlapsWithEarlierEnding() {
         assertThat(a1.overlaps(a2)).isTrue(); // a1 starts before a2 ends and a1 ends after a2 starts
+    }
+
+    @Test
+    public void testAppointmentDoesNotOverlapWithLaterStarting() {
         assertThat(a1.overlaps(a3)).isFalse(); // a1 ends before a3 starts
     }
 }
