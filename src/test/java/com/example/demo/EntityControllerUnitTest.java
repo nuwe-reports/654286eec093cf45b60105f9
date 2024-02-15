@@ -69,10 +69,9 @@ class DoctorControllerUnitTest{
 
     @Test
     void shouldCreateDoctor() throws Exception {
-        
         when(doctorRepository.save(any(Doctor.class))).thenReturn(doctor);
 
-        mockMvc.perform(post("/api/doctors")
+        mockMvc.perform(post("/api/doctor")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(doctor)))
                 .andExpect(status().isCreated())
@@ -147,7 +146,7 @@ class PatientControllerUnitTest{
     void shouldCreatePatient() throws Exception {
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
 
-        mockMvc.perform(post("/api/patients")
+        mockMvc.perform(post("/api/patient")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(patient)))
                 .andExpect(status().isCreated())
@@ -217,7 +216,7 @@ class RoomControllerUnitTest{
     void shouldCreateRoom() throws Exception {
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
-        mockMvc.perform(post("/api/rooms")
+        mockMvc.perform(post("/api/room")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(room)))
                 .andExpect(status().isCreated())
