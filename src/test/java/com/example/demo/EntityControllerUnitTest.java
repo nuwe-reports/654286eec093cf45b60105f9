@@ -5,29 +5,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
-import java.time.LocalDateTime;
-import java.time.format.*;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
 import com.example.demo.controllers.*;
 import com.example.demo.repositories.*;
 import com.example.demo.entities.*;
@@ -46,9 +36,15 @@ class DoctorControllerUnitTest{
     @Autowired
     private ObjectMapper objectMapper;
 
+    private Doctor doctor;
+
+    @BeforeEach
+    void setUp() {
+        doctor = new Doctor("John", "Doe", 30, "john.doe@example.com");
+    }
+
     @Test
     void shouldGetAllDoctors() throws Exception {
-        Doctor doctor = new Doctor("John", "Doe", 30, "john.doe@example.com");
         when(doctorRepository.findAll()).thenReturn(Arrays.asList(doctor));
 
         mockMvc.perform(get("/api/doctors"))
@@ -61,7 +57,6 @@ class DoctorControllerUnitTest{
     
     @Test
     void shouldGetDoctorById() throws Exception {
-        Doctor doctor = new Doctor("John", "Doe", 30, "john.doe@example.com");
         when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
 
         mockMvc.perform(get("/api/doctors/1"))
@@ -74,7 +69,6 @@ class DoctorControllerUnitTest{
 
     @Test
     void shouldCreateDoctor() throws Exception {
-        Doctor doctor = new Doctor("John", "Doe", 30, "john.doe@example.com");
         when(doctorRepository.save(any(Doctor.class))).thenReturn(doctor);
 
         mockMvc.perform(post("/api/doctor")
@@ -89,7 +83,6 @@ class DoctorControllerUnitTest{
 
     @Test
     void shouldDeleteDoctor() throws Exception {
-        Doctor doctor = new Doctor("John", "Doe", 30, "john.doe@example.com");
         when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
         doNothing().when(doctorRepository).deleteById(1L);
 
@@ -118,9 +111,15 @@ class PatientControllerUnitTest{
     @Autowired
     private ObjectMapper objectMapper;
 
+    private Patient patient;
+
+    @BeforeEach
+    void setUp() {
+        patient = new Patient("John", "Doe", 30, "john.doe@example.com");
+    }
+
     @Test
     void shouldGetAllPatients() throws Exception {
-        Patient patient = new Patient("John", "Doe", 30, "john.doe@example.com");
         when(patientRepository.findAll()).thenReturn(Arrays.asList(patient));
 
         mockMvc.perform(get("/api/patients"))
@@ -133,7 +132,6 @@ class PatientControllerUnitTest{
 
     @Test
     void shouldGetPatientById() throws Exception {
-        Patient patient = new Patient("John", "Doe", 30, "john.doe@example.com");
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
 
         mockMvc.perform(get("/api/patients/1"))
@@ -146,7 +144,6 @@ class PatientControllerUnitTest{
 
     @Test
     void shouldCreatePatient() throws Exception {
-        Patient patient = new Patient("John", "Doe", 30, "john.doe@example.com");
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
 
         mockMvc.perform(post("/api/patient")
@@ -161,8 +158,8 @@ class PatientControllerUnitTest{
 
     @Test
     void shouldDeletePatient() throws Exception {
-        Patient patient = new Patient("John", "Doe", 30, "john.doe@example.com");
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+
         doNothing().when(patientRepository).deleteById(1L);
 
         mockMvc.perform(delete("/api/patients/1"))
@@ -190,9 +187,15 @@ class RoomControllerUnitTest{
     @Autowired
     private ObjectMapper objectMapper;
 
+    private Room room;
+
+    @BeforeEach
+    void setUp() {
+        room = new Room("Dermatology");
+    }
+
     @Test
     void shouldGetAllRooms() throws Exception {
-        Room room = new Room("Dermatology");
         when(roomRepository.findAll()).thenReturn(Arrays.asList(room));
 
         mockMvc.perform(get("/api/rooms"))
@@ -202,7 +205,6 @@ class RoomControllerUnitTest{
 
     @Test
     void shouldGetRoomByRoomName() throws Exception {
-        Room room = new Room("Dermatology");
         when(roomRepository.findByRoomName("Dermatology")).thenReturn(Optional.of(room));
 
         mockMvc.perform(get("/api/rooms/Dermatology"))
@@ -212,7 +214,6 @@ class RoomControllerUnitTest{
 
     @Test
     void shouldCreateRoom() throws Exception {
-        Room room = new Room("Dermatology");
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
         mockMvc.perform(post("/api/room")
@@ -224,7 +225,6 @@ class RoomControllerUnitTest{
 
     @Test
     void shouldDeleteRoom() throws Exception {
-        Room room = new Room("Dermatology");
         when(roomRepository.findByRoomName("Dermatology")).thenReturn(Optional.of(room));
         doNothing().when(roomRepository).deleteByRoomName("Dermatology");
 
